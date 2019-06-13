@@ -1,0 +1,85 @@
+Option Explicit
+
+Sub StockData()
+        
+        Dim row As Long
+        Dim current_ticker As String
+        Dim lastrow As Long
+        Dim tempcount As Integer
+        Dim ws As Integer
+        Dim i As Integer
+        
+        Dim open_value As Single
+        Dim close_value As Single
+        Dim ychange As String
+        
+        
+        Dim total As Single
+        Dim writerow As Long
+
+        
+        ws = ActiveWorkbook.Worksheets.Count
+        
+
+    'Begin the loop through active worksheets
+         For i = 1 To ws
+                ActiveWorkbook.Sheets(i).Activate
+                writerow = 2
+        
+    'Named columns for results
+        
+                ActiveWorkbook.Sheets(i).Cells(writerow - 1, 10).Value = "Ticker"
+                ActiveWorkbook.Sheets(i).Cells(writerow - 1, 11).Value = "Total Volume"
+                ActiveWorkbook.Sheets(i).Cells(writerow - 1, 12).Value = "Yearly Change"
+                ActiveWorkbook.Sheets(i).Cells(writerow - 1, 13).Value = "% Change"
+                
+    'Set first ticker, total, open value
+                current_ticker = ActiveWorkbook.Sheets(i).Range("A2").Value
+                total = ActiveWorkbook.Sheets(i).Range("G2").Value
+                open_value = ActiveWorkbook.Sheets(i).Cells(2, 3).Value
+                
+    'Finding last row in active work sheet
+          
+                lastrow = ActiveWorkbook.Sheets(i).Cells(ActiveWorkbook.Sheets(i).Rows.Count, "A").End(xlUp).row
+        
+    'Looping through all rows
+                For row = 3 To lastrow + 1
+    'Collecting total while ticker the same
+                        If ActiveWorkbook.Sheets(i).Cells(row, 1).Value = current_ticker Then
+                            total = total + ActiveWorkbook.Sheets(i).Cells(row, 7).Value
+    'As soon as the ticker changes, recording close value and recording all totals for previous ticker
+                        Else
+                            close_value = ActiveWorkbook.Sheets(i).Cells(row - 1, 6).Value
+                            ActiveWorkbook.Sheets(i).Cells(writerow, 10).Value = current_ticker
+                            ActiveWorkbook.Sheets(i).Cells(writerow, 11).Value = total
+                            ActiveWorkbook.Sheets(i).Cells(writerow, 12).Value = close_value - open_value
+                               
+    'Coloring "Year Change" cells
+                                If ActiveWorkbook.Sheets(i).Cells(writerow, 12).Value > 0 Then
+                                    ActiveWorkbook.Sheets(i).Cells(writerow, 12).Interior.ColorIndex = 4
+                                    Else: ActiveWorkbook.Sheets(i).Cells(writerow, 12).Interior.ColorIndex = 3
+                                End If
+    'Calculating Precentage Changes
+                            If open_value <> 0 Then
+                            ActiveWorkbook.Sheets(i).Cells(writerow, 13).Value = 100 * (close_value - open_value) / open_value
+                            Else: ActiveWorkbook.Sheets(i).Cells(writerow, 13).Value = "N/A"
+                            End If
+                            writerow = writerow + 1
+    'Set new ticker
+                        current_ticker = ActiveWorkbook.Sheets(i).Cells(row, 1).Value
+    'Set total for new ticker
+                        total = ActiveWorkbook.Sheets(i).Cells(row, 7).Value
+    'Open Value goes to next ticker
+                        open_value = ActiveWorkbook.Sheets(i).Cells(row, 3).Value
+                    
+                        End If
+                        
+                Next row
+                
+        Next i
+        
+                MsgBox ("All done")
+                ActiveWorkbook.Sheets(1).Activate
+                
+End Sub
+
