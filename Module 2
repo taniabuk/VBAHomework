@@ -1,0 +1,22 @@
+Sub Clear_Columns()
+ 
+        Dim ws As Integer
+        Dim i As Integer
+        
+        ws = ActiveWorkbook.Worksheets.Count
+        
+        'ActiveWorkbook.Sheets(1).Cells(15, 17).Value = "Started clear" & Now
+
+        'Begin the loop through worksheets
+         For i = 1 To ws
+        'ActiveWorkbook.Sheets(i).Activate
+                Worksheets(i).Columns(10).ClearContents
+                Worksheets(i).Columns(11).ClearContents
+                Worksheets(i).Columns(12).ClearContents
+                Worksheets(i).Columns(12).Interior.Color = xlNone
+                Worksheets(i).Columns(13).ClearContents
+                
+        Next i
+            ActiveWorkbook.Sheets(1).Activate
+            
+End Sub
